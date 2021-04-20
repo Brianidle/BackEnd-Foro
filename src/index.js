@@ -30,27 +30,29 @@ app.get("/foroApi/authCookies", (req, res) => {
   try {
     let token = req.headers.authorization;
     const idUser = getUser(token);
-    let usersessionCookie = 'user_session=' + token + '; secure; SameSite=None';
-    let cookiesConcatenationString = usersessionCookie;
     
-    console.log("userssionCookie");
-    console.log(cookiesConcatenationString);
+    // let cookiesConcatenationString = usersessionCookie;
+    
+    // console.log("userssionCookie");
+    // console.log(cookiesConcatenationString);
 
-    // console.log('Set-Cookie', 'user_session=' + token + '; secure; SameSite=None');
-
-    // res.setHeader('Set-Cookie', 'user_session=' + token + '; secure; SameSite=None');
-    // res.cookie("user_session", token, {
-    //   expires: new Date(Date.now() + 1296000000),
-    //   sameSite: 'none'
-    // });
+    res.cookie("user_session", token, {
+      expire: new Date(Date.now() - 1296000000),
+      secure: true,
+      sameSite: 'none'
+    });
 
     models.User.findOne({ _id: idUser.id }, (err, user) => {
       if (user) {
-        let usernameCookie = 'username=' + user.username + '; secure; SameSite=None';
-        cookiesConcatenationString.concat("," + usernameCookie);
-        console.log(cookiesConcatenationString);
-        console.log(cookiesConcatenationString);
-        res.header('Set-Cookie', cookiesConcatenationString);
+        // let usernameCookie = 'username=' + user.username + '; secure; SameSite=None';
+        // cookiesConcatenationString.concat("," + usernameCookie);
+        // console.log(cookiesConcatenationString);
+        // console.log(cookiesConcatenationString);
+        res.cookie("username",  user.username, {
+          expire: new Date(Date.now() - 1296000000),
+          secure: true,
+          sameSite: 'none'
+        });
         // res.cookie("username", user.username, {
         //   expires: new Date(Date.now() + 1296000000),
         //   sameSite: 'none'
@@ -156,18 +158,17 @@ const getJsonCookies = (cookiesString) => {
 };
 
 const logOutClient = (res) => {
-  res.header('Set-Cookie', 'user_session=""; secure; SameSite=None,username=""; secure; SameSite=None');
-  // res.cookie("user_session", "", {
-  //   expire: new Date(Date.now() - 1296000000),
-  //   sameSite: 'none'
-  // });
+  //res.header('Set-Cookie', 'user_session=""; secure; SameSite=None,username=""; secure; SameSite=None');
 
+  res.cookie("user_session", "", {
+    expire: new Date(Date.now() - 1296000000),
+    secure: true,
+    sameSite: 'none'
+  });
 
-  // res.setHeader('Set-Cookie', );
-
-
-  // res.cookie("username", "", {
-  //   expire: new Date(Date.now() - 1296000000),
-  //   sameSite: 'none'
-  // });
+   res.cookie("username", "", {
+     expire: new Date(Date.now() - 1296000000),
+     secure: true,
+     sameSite: 'none'
+   });
 }
