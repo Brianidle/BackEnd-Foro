@@ -18,7 +18,7 @@ const models = require('./models');
 //---------------------------------------------------------------------
 
 const app = express();
-var numeroDeVeces=0;
+var numeroDeVeces = 0;
 var corsOptions = {
   origin: process.env.ACAOrigin_URL,
   credentials: true
@@ -30,10 +30,10 @@ app.get("/foroApi/authCookies", (req, res) => {
   try {
     numeroDeVeces++;
     res.header('Access-Control-Allow-Origin', process.env.ACAOrigin_URL);
-    console.log("Se entro a foroApi/authCookies "+ numeroDeVeces+" vez")
+    console.log("Se entro a foroApi/authCookies " + numeroDeVeces + " vez")
     let token = req.headers.authorization;
     const idUser = getUser(token);
-    let usersessionCookie = 'user_session=' + token + '; SameSite=None';
+    let usersessionCookie = 'user_session=' + token + '; expires=' + new Date(Date.now() - 1296000000).toUTCString() + '; secure; SameSite=None';
     let cookiesArray = [];
     cookiesArray.push(usersessionCookie);
 
@@ -42,7 +42,7 @@ app.get("/foroApi/authCookies", (req, res) => {
 
     models.User.findOne({ _id: idUser.id }, (err, user) => {
       if (user) {
-        let usernameCookie = 'username=' + user.username + '; SameSite=None';
+        let usernameCookie = 'username=' + user.username + '; expires=' + new Date(Date.now() - 1296000000).toUTCString() + '; secure; SameSite=None';
         cookiesArray.push(usernameCookie);
 
         console.log("usernameCookie added");
