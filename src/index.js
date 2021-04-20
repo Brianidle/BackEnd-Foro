@@ -33,14 +33,14 @@ app.get("/foroApi/authCookies", (req, res) => {
 
     res.cookie("user_session", token, {
       expires: new Date(Date.now() + 1296000000),
-      sameSite: 'None',
+      sameSite: 'none',
     });
 
     models.User.findOne({ _id: idUser.id }, (err, user) => {
       if (user) {
         res.cookie("username", user.username, {
           expires: new Date(Date.now() + 1296000000),
-          sameSite: 'None',
+          sameSite: 'none',
         });
         res.send("Authenticated");
       } else {
@@ -89,7 +89,7 @@ const apolloServer = new ApolloServer({
         keyNames.forEach(keyName => {
           res.cookie(keyName, jsonCookies[keyName], token, {
             expires: new Date(Date.now() + 1296000000),
-            sameSite: 'None',
+            sameSite: 'none',
           });
         })
       }
@@ -129,10 +129,10 @@ const getJsonCookies = (cookiesString) => {
 const logOutClient = (res) => {
   res.cookie("user_session", "", {
     expire: new Date(Date.now() - 1296000000),
-    sameSite: 'None',
+    sameSite: 'none',
   });
   res.cookie("username", "", {
     expire: new Date(Date.now() - 1296000000),
-    sameSite: 'None',
+    sameSite: 'none',
   });
 }
