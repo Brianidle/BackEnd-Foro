@@ -30,7 +30,7 @@ app.get("/foroApi/authCookies", (req, res) => {
   try {
     let token = req.headers.authorization;
     const idUser = getUser(token);
-    let usersessionCookie = 'user_session=' + token + '; secure; SameSite=None';
+    let usersessionCookie = 'user_session=' + token + ';';
     let cookiesConcatenationString = usersessionCookie;
     
     console.log("userssionCookie");
@@ -156,7 +156,7 @@ const getJsonCookies = (cookiesString) => {
 };
 
 const logOutClient = (res) => {
-  res.header('Set-Cookie', 'user_session=""; secure; SameSite=None;username=""; secure; SameSite=None');
+  res.header('Set-Cookie', 'user_session="";username=""; secure; SameSite=None');
   // res.cookie("user_session", "", {
   //   expire: new Date(Date.now() - 1296000000),
   //   sameSite: 'none'
