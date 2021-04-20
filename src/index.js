@@ -27,35 +27,21 @@ var corsOptions = {
 app.use(cors(corsOptions));
 
 app.get("/foroApi/authCookies", (req, res) => {
-  res.header('Access-Control-Allow-Origin', process.env.ACAOrigin_URL);
   try {
     let token = req.headers.authorization;
     const idUser = getUser(token);
-    
-    // let cookiesConcatenationString = usersessionCookie;
-    
-    // console.log("userssionCookie");
-    // console.log(cookiesConcatenationString);
-    res.setHeader('Set-Cookie', ['username="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNzZlOGNlNjFhZDM0MDAyMjJkOTU5YSIsImlhdCI6MTYxODkzNDY5Nn0.LG8M5eBdnoK07yZF4iEFI5OOx0jzCywbV14k8y-dS2M"; secure; SameSite=None', 'user_session="EL_CAPO"; secure; SameSite=None']);
-    res.cookie("user_session", token, {
-      secure: true,
-      sameSite: false
-    });
+    let usersessionCookie = 'user_session=' + token + '; secure; SameSite=None';
+    let cookiesArray = [];
+    cookiesArray.push(usersessionCookie);
 
     models.User.findOne({ _id: idUser.id }, (err, user) => {
       if (user) {
-        // let usernameCookie = 'username=' + user.username + '; secure; SameSite=None';
-        // cookiesConcatenationString.concat("," + usernameCookie);
-        // console.log(cookiesConcatenationString);
-        // console.log(cookiesConcatenationString);
-        res.cookie("username",  user.username, {
-          secure: true,
-          sameSite: false
-        });
-        // res.cookie("username", user.username, {
-        //   expires: new Date(Date.now() + 1296000000),
-        //   sameSite: 'none'
-        // });
+        let usernameCookie = 'username=' + user.username + '; secure; SameSite=None';
+        cookiesArray.push(usernameCookie);
+
+        console.log(cookiesArray);
+        res.setHeader('Set-Cookie', cookiesArray);
+
         res.send("Authenticated");
       } else {
         res.send("Not Authenticated");
@@ -69,7 +55,6 @@ app.get("/foroApi/authCookies", (req, res) => {
 });
 
 app.get("/foroApi/logout", (req, res) => {
-  res.header('Access-Control-Allow-Origin', process.env.ACAOrigin_URL);
   logOutClient(res);
 
   res.send("Logged Out");
@@ -91,6 +76,7 @@ const apolloServer = new ApolloServer({
     if (cookies) {
       jsonCookies = getJsonCookies(cookies);
       let token = jsonCookies.user_session;
+      
       try {
         idUser = getUser(token);
       }
@@ -100,13 +86,20 @@ const apolloServer = new ApolloServer({
 
       if (idUser) {
         let keyNames = Object.keys(jsonCookies);
+        let cookiesArray = [];
+
         //reenvio de cookies
-        keyNames.forEach(keyName => {
-          res.cookie(keyName, jsonCookies[keyName], token, {
-            secure: true,
-            sameSite: false
-          });
-        })
+        for (let i = 0; i < keyNames.length; i++) {
+          const keyName = keyNames[i];
+          let newCookie=keyName + '=' + jsonCookies[keyName] + '; secure; SameSite=None';
+
+          cookiesArray.push(newCookie);
+
+        }
+        console.log("res cookies de context");
+        console.log(cookiesArray);
+        res.setHeader('Set-Cookie', cookiesArray);
+
       }
 
     }
@@ -143,15 +136,5 @@ const getJsonCookies = (cookiesString) => {
 };
 
 const logOutClient = (res) => {
-  //res.header('Set-Cookie', 'user_session=""; secure; SameSite=None,username=""; secure; SameSite=None');
-
-  res.cookie("user_session", "", {
-    secure: true,
-    sameSite: false
-  });
-
-   res.cookie("username", "", {
-     secure: true,
-     sameSite: false
-   });
+  res.setHeader('Set-Cookie', ['user_session=""; secure; SameSite=None','username=""; secure; SameSite=None']);
 }
