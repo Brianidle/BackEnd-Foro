@@ -31,17 +31,13 @@ app.get("/foroApi/authCookies", (req, res) => {
   const idUser = getUser(token);
 
   res.cookie("user_session", token, {
-    expires: new Date(Date.now() + 1296000000),
-    sameSite: 'none',
-    domain: '.theforo.herokuapp.com'
+    expires: new Date(Date.now() + 1296000000)
   });
 
   models.User.findOne({ _id: idUser.id }, (err, user) => {
     if (user) {
       res.cookie("username", user.username, {
-        expires: new Date(Date.now() + 1296000000),
-        sameSite: 'none',
-        domain: '.theforo.herokuapp.com'
+        expires: new Date(Date.now() + 1296000000)
       });
       res.send("Authenticated");
     } else {
@@ -85,9 +81,7 @@ const apolloServer = new ApolloServer({
         //reenvio de cookies
         keyNames.forEach(keyName => {
           res.cookie(keyName, jsonCookies[keyName], token, {
-            expires: new Date(Date.now() + 1296000000),
-            sameSite: 'none',
-            domain: '.theforo.herokuapp.com'
+            expires: new Date(Date.now() + 1296000000)
           });
         })
       }
@@ -126,13 +120,9 @@ const getJsonCookies = (cookiesString) => {
 
 const logOutClient = (res) => {
   res.cookie("user_session", "", {
-    expire: new Date(Date.now() - 1296000000),
-    sameSite: 'none',
-    domain: '.theforo.herokuapp.com'
+    expire: new Date(Date.now() - 1296000000)
   });
   res.cookie("username", "", {
-    expire: new Date(Date.now() - 1296000000),
-    sameSite: 'none',
-    domain: '.theforo.herokuapp.com'
+    expire: new Date(Date.now() - 1296000000)
   });
 }
