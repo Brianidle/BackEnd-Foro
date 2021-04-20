@@ -27,31 +27,31 @@ var corsOptions = {
 app.use(cors(corsOptions));
 
 app.get("/foroApi/authCookies", (req, res) => {
+  res.header('Access-Control-Allow-Origin', process.env.ACAOrigin_URL);
   try {
     let token = req.headers.authorization;
     const idUser = getUser(token);
-    let usersessionCookie = 'user_session=' + token + ';';
+    
     // let cookiesConcatenationString = usersessionCookie;
     
     // console.log("userssionCookie");
     // console.log(cookiesConcatenationString);
 
-    // console.log('Set-Cookie', 'user_session=' + token + '; secure; SameSite=None');
-
-    // res.setHeader('Set-Cookie', 'user_session=' + token + '; secure; SameSite=None');
-    // res.cookie("user_session", token, {
-    //   expires: new Date(Date.now() + 1296000000),
-    //   sameSite: 'none'
-    // });
+    res.cookie("user_session", token, {
+      secure: true,
+      sameSite: false
+    });
 
     models.User.findOne({ _id: idUser.id }, (err, user) => {
       if (user) {
-        let usernameCookie = 'username=' + user.username + '; secure; SameSite=None';
-        // cookiesConcatenationString.concat(";" + usernameCookie);
+        // let usernameCookie = 'username=' + user.username + '; secure; SameSite=None';
+        // cookiesConcatenationString.concat("," + usernameCookie);
         // console.log(cookiesConcatenationString);
         // console.log(cookiesConcatenationString);
-        res.header('Set-Cookie', 'user_session="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNzZlOGNlNjFhZDM0MDAyMjJkOTU5YSIsImlhdCI6MTYxODkzMzQ4NH0.UUEqzXakQoJp2lPk7eBfxm-0TUjToqphn_2OgR44Axs";username="animalplanet"; secure; SameSite=None');
-        // res.header('Set-Cookie', cookiesConcatenationString);
+        res.cookie("username",  user.username, {
+          secure: true,
+          sameSite: false
+        });
         // res.cookie("username", user.username, {
         //   expires: new Date(Date.now() + 1296000000),
         //   sameSite: 'none'
@@ -69,6 +69,7 @@ app.get("/foroApi/authCookies", (req, res) => {
 });
 
 app.get("/foroApi/logout", (req, res) => {
+  res.header('Access-Control-Allow-Origin', process.env.ACAOrigin_URL);
   logOutClient(res);
 
   res.send("Logged Out");
@@ -99,29 +100,13 @@ const apolloServer = new ApolloServer({
 
       if (idUser) {
         let keyNames = Object.keys(jsonCookies);
-        let cookiesConcatenationString = "";
         //reenvio de cookies
-        res.header('Set-Cookie', 'user_session="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNzZlOGNlNjFhZDM0MDAyMjJkOTU5YSIsImlhdCI6MTYxODkzMzQ4NH0.UUEqzXakQoJp2lPk7eBfxm-0TUjToqphn_2OgR44Axs";username="animalplanet"; secure; SameSite=None');
-        // for (let i = 0; i < keyNames.length; i++) {
-        //   const keyName = keyNames[i];
-        //   let newCookie=keyName + '=' + jsonCookies[keyName] + '; secure; SameSite=None';
-
-        //   if (i == 0) {
-        //     cookiesConcatenationString = newCookie;
-        //   } else {
-        //     cookiesConcatenationString.concat(';' + newCookie);
-        //   }
-
-        // }
-        // console.log("res cokies de context");
-        // console.log(cookiesConcatenationString);
-        // console.log(cookiesConcatenationString);
-        // res.header('Set-Cookie', cookiesConcatenationString);
-
-        // res.cookie(keyName, jsonCookies[keyName], {
-        //   expires: new Date(Date.now() + 1296000000),
-        //   sameSite: 'none'
-        // });
+        keyNames.forEach(keyName => {
+          res.cookie(keyName, jsonCookies[keyName], token, {
+            secure: true,
+            sameSite: false
+          });
+        })
       }
 
     }
@@ -158,18 +143,15 @@ const getJsonCookies = (cookiesString) => {
 };
 
 const logOutClient = (res) => {
-  res.header('Set-Cookie', 'user_session="";username=""; secure; SameSite=None');
-  // res.cookie("user_session", "", {
-  //   expire: new Date(Date.now() - 1296000000),
-  //   sameSite: 'none'
-  // });
+  //res.header('Set-Cookie', 'user_session=""; secure; SameSite=None,username=""; secure; SameSite=None');
 
+  res.cookie("user_session", "", {
+    secure: true,
+    sameSite: false
+  });
 
-  // res.setHeader('Set-Cookie', );
-
-
-  // res.cookie("username", "", {
-  //   expire: new Date(Date.now() - 1296000000),
-  //   sameSite: 'none'
-  // });
+   res.cookie("username", "", {
+     secure: true,
+     sameSite: false
+   });
 }
