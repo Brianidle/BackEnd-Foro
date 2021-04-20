@@ -30,10 +30,12 @@ app.get("/foroApi/authCookies", (req, res) => {
   try {
     let token = req.headers.authorization;
     const idUser = getUser(token);
+    let usersessionCookie = 'user_session=' + token + '; secure; SameSite=None';
+    let cookiesConcatenationString = usersessionCookie;
 
-    console.log('Set-Cookie', 'user_session=' + token + '; secure; SameSite=None');
+    // console.log('Set-Cookie', 'user_session=' + token + '; secure; SameSite=None');
 
-    res.setHeader('Set-Cookie', 'user_session=' + token + '; secure; SameSite=None');
+    // res.setHeader('Set-Cookie', 'user_session=' + token + '; secure; SameSite=None');
     // res.cookie("user_session", token, {
     //   expires: new Date(Date.now() + 1296000000),
     //   sameSite: 'none'
@@ -41,8 +43,10 @@ app.get("/foroApi/authCookies", (req, res) => {
 
     models.User.findOne({ _id: idUser.id }, (err, user) => {
       if (user) {
-        console.log('Set-Cookie', 'username=' + user.username + '; secure; SameSite=None');
-        res.setHeader('Set-Cookie', 'username=' + user.username + '; secure; SameSite=None');
+        let usernameCookie = 'username=' + user.username + '; secure; SameSite=None';
+        cookiesConcatenationString.concat("," + usernameCookie);
+        console.log(cookiesConcatenationString);
+        res.setHeader('Set-Cookie', cookiesConcatenationString);
         // res.cookie("username", user.username, {
         //   expires: new Date(Date.now() + 1296000000),
         //   sameSite: 'none'
@@ -90,16 +94,29 @@ const apolloServer = new ApolloServer({
 
       if (idUser) {
         let keyNames = Object.keys(jsonCookies);
+        let cookiesConcatenationString = "";
         //reenvio de cookies
-        keyNames.forEach(keyName => {
-          console.log('Set-Cookie', keyName+'='+ jsonCookies[keyName]+ '; secure; SameSite=None')
-          res.setHeader('Set-Cookie', keyName+'='+ jsonCookies[keyName]+ '; secure; SameSite=None');
-          // res.cookie(keyName, jsonCookies[keyName], {
-          //   expires: new Date(Date.now() + 1296000000),
-          //   sameSite: 'none'
-          // });
-        })
+        for (let i = 0; i < keyNames.length; i++) {
+          const keyName = keyNames[i];
+          let newCookie=keyName + '=' + jsonCookies[keyName] + '; secure; SameSite=None';
+
+          if (i == 0) {
+            cookiesConcatenationString = newCookie;
+          } else {
+            cookiesConcatenationString.concat(',' + newCookie);
+          }
+
+        }
+
+        console.log(cookiesConcatenationString);
+        res.setHeader('Set-Cookie', cookiesConcatenationString);
+
+        // res.cookie(keyName, jsonCookies[keyName], {
+        //   expires: new Date(Date.now() + 1296000000),
+        //   sameSite: 'none'
+        // });
       }
+
     }
     return { models, idUser };
   }
@@ -134,12 +151,16 @@ const getJsonCookies = (cookiesString) => {
 };
 
 const logOutClient = (res) => {
-  res.setHeader('Set-Cookie', 'user_session=""; secure; SameSite=None');
+  res.setHeader('Set-Cookie', 'user_session=""; secure; SameSite=None,username=""; secure; SameSite=None');
   // res.cookie("user_session", "", {
   //   expire: new Date(Date.now() - 1296000000),
   //   sameSite: 'none'
   // });
-  res.setHeader('Set-Cookie', 'username=""; secure; SameSite=None');
+
+
+  // res.setHeader('Set-Cookie', );
+
+
   // res.cookie("username", "", {
   //   expire: new Date(Date.now() - 1296000000),
   //   sameSite: 'none'
