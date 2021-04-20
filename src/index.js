@@ -18,7 +18,7 @@ const models = require('./models');
 //---------------------------------------------------------------------
 
 const app = express();
-
+var numeroDeVeces=0;
 var corsOptions = {
   origin: process.env.ACAOrigin_URL,
   credentials: true
@@ -28,19 +28,24 @@ app.use(cors(corsOptions));
 
 app.get("/foroApi/authCookies", (req, res) => {
   try {
+    numeroDeVeces++;
     res.header('Access-Control-Allow-Origin', process.env.ACAOrigin_URL);
-    
+    console.log("Se entro a foroApi/authCookies "+ numeroDeVeces+" vez")
     let token = req.headers.authorization;
     const idUser = getUser(token);
     let usersessionCookie = 'user_session=' + token + '; path=/; secure; SameSite=None';
     let cookiesArray = [];
     cookiesArray.push(usersessionCookie);
 
+    console.log("usersessionCookie added");
+    console.log(cookiesArray);
+
     models.User.findOne({ _id: idUser.id }, (err, user) => {
       if (user) {
         let usernameCookie = 'username=' + user.username + '; path=/; secure; SameSite=None';
         cookiesArray.push(usernameCookie);
 
+        console.log("usernameCookie added");
         console.log(cookiesArray);
         res.setHeader('Set-Cookie', cookiesArray);
 
@@ -77,12 +82,10 @@ const apolloServer = new ApolloServer({
 
     if (cookies) {
       jsonCookies = getJsonCookies(cookies);
-      
+
       let token = jsonCookies.user_session;
-      
-    
-        idUser = getUser(token);
-      
+
+      idUser = getUser(token);
 
     }
     return { models, idUser };
@@ -119,5 +122,5 @@ const getJsonCookies = (cookiesString) => {
 
 const logOutClient = (res) => {
   console.log("se executa logOutClient()");
-  res.setHeader('Set-Cookie', ['user_session=""; path=/; secure; SameSite=None','username=""; path=/; secure; SameSite=None']);
+  //res.setHeader('Set-Cookie', ['user_session=""; path=/; secure; SameSite=None', 'username=""; path=/; secure; SameSite=None']);
 }
