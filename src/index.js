@@ -33,7 +33,7 @@ app.get("/foroApi/authCookies", (req, res) => {
 
     console.log('user_session=' + token + '; SameSite=None');
 
-    res.setHeader('Set-Cookie', 'user_session=' + token + '; SameSite=None');
+    res.setHeader('Set-Cookie', 'user_session=' + token + '; secure; SameSite=None');
     // res.cookie("user_session", token, {
     //   expires: new Date(Date.now() + 1296000000),
     //   sameSite: 'none'
@@ -42,7 +42,7 @@ app.get("/foroApi/authCookies", (req, res) => {
     models.User.findOne({ _id: idUser.id }, (err, user) => {
       if (user) {
         console.log('username=' + user.username + '; SameSite=None');
-        res.setHeader('Set-Cookie', 'username=' + user.username + '; SameSite=None');
+        res.setHeader('Set-Cookie', 'username=' + user.username + '; secure; SameSite=None');
         // res.cookie("username", user.username, {
         //   expires: new Date(Date.now() + 1296000000),
         //   sameSite: 'none'
