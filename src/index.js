@@ -31,17 +31,22 @@ app.get("/foroApi/authCookies", (req, res) => {
     let token = req.headers.authorization;
     const idUser = getUser(token);
 
-    res.cookie("user_session", token, {
-      expires: new Date(Date.now() + 1296000000),
-      sameSite: 'none'
-    });
+    console.log('user_session=' + token + '; SameSite=None');
+
+    res.setHeader('Set-Cookie', 'user_session=' + token + '; SameSite=None');
+    // res.cookie("user_session", token, {
+    //   expires: new Date(Date.now() + 1296000000),
+    //   sameSite: 'none'
+    // });
 
     models.User.findOne({ _id: idUser.id }, (err, user) => {
       if (user) {
-        res.cookie("username", user.username, {
-          expires: new Date(Date.now() + 1296000000),
-          sameSite: 'none'
-        });
+        console.log('username=' + user.username + '; SameSite=None');
+        res.setHeader('Set-Cookie', 'username=' + user.username + '; SameSite=None');
+        // res.cookie("username", user.username, {
+        //   expires: new Date(Date.now() + 1296000000),
+        //   sameSite: 'none'
+        // });
         res.send("Authenticated");
       } else {
         res.send("Not Authenticated");
