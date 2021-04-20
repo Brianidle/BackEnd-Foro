@@ -27,23 +27,30 @@ var corsOptions = {
 app.use(cors(corsOptions));
 
 app.get("/foroApi/authCookies", (req, res) => {
-  let token = req.headers.authorization;
-  const idUser = getUser(token);
+  try {
+    let token = req.headers.authorization;
+    const idUser = getUser(token);
 
-  res.cookie("user_session", token, {
-    expires: new Date(Date.now() + 1296000000)
-  });
+    res.cookie("user_session", token, {
+      expires: new Date(Date.now() + 1296000000),
+      sameSite: 'None',
+    });
 
-  models.User.findOne({ _id: idUser.id }, (err, user) => {
-    if (user) {
-      res.cookie("username", user.username, {
-        expires: new Date(Date.now() + 1296000000)
-      });
-      res.send("Authenticated");
-    } else {
-      res.send("Not Authenticated");
-    }
-  });
+    models.User.findOne({ _id: idUser.id }, (err, user) => {
+      if (user) {
+        res.cookie("username", user.username, {
+          expires: new Date(Date.now() + 1296000000),
+          sameSite: 'None',
+        });
+        res.send("Authenticated");
+      } else {
+        res.send("Not Authenticated");
+      }
+    });
+  }
+  catch (err) {
+    console.log(err);
+  }
 
 });
 
@@ -81,7 +88,8 @@ const apolloServer = new ApolloServer({
         //reenvio de cookies
         keyNames.forEach(keyName => {
           res.cookie(keyName, jsonCookies[keyName], token, {
-            expires: new Date(Date.now() + 1296000000)
+            expires: new Date(Date.now() + 1296000000),
+            sameSite: 'None',
           });
         })
       }
@@ -120,9 +128,11 @@ const getJsonCookies = (cookiesString) => {
 
 const logOutClient = (res) => {
   res.cookie("user_session", "", {
-    expire: new Date(Date.now() - 1296000000)
+    expire: new Date(Date.now() - 1296000000),
+    sameSite: 'None',
   });
   res.cookie("username", "", {
-    expire: new Date(Date.now() - 1296000000)
+    expire: new Date(Date.now() - 1296000000),
+    sameSite: 'None',
   });
 }
