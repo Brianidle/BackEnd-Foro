@@ -66,7 +66,6 @@ const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
   context: ({ req, res }) => {
-    res.header('Access-Control-Allow-Origin', process.env.ACAOrigin_URL);
 
     let idUser;
     let jsonCookies;
