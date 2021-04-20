@@ -66,7 +66,6 @@ const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
   context: ({ req, res }) => {
-    res.header('Access-Control-Allow-Origin', process.env.ACAOrigin_URL);
 
     let idUser;
     let jsonCookies;
@@ -75,8 +74,7 @@ const apolloServer = new ApolloServer({
 
     if (cookies) {
       jsonCookies = getJsonCookies(cookies);
-      console.log("Cookies de context")
-      console.log(jsonCookies);
+      
       let token = jsonCookies.user_session;
       
       try {
@@ -85,24 +83,6 @@ const apolloServer = new ApolloServer({
       catch (err) {
         console.log("No se pudo decifrar el token recibido token="+token);
         logOutClient(res);
-      }
-
-      if (idUser) {
-        let keyNames = Object.keys(jsonCookies);
-        let cookiesArray = [];
-
-        //reenvio de cookies
-        for (let i = 0; i < keyNames.length; i++) {
-          const keyName = keyNames[i];
-          let newCookie=keyName + '=' + jsonCookies[keyName] + '; path=/; secure; SameSite=None';
-
-          cookiesArray.push(newCookie);
-
-        }
-        console.log("res cookies de context");
-        console.log(cookiesArray);
-        res.setHeader('Set-Cookie', cookiesArray);
-
       }
 
     }
