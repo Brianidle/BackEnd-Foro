@@ -32,6 +32,9 @@ app.get("/foroApi/authCookies", (req, res) => {
     const idUser = getUser(token);
     let usersessionCookie = 'user_session=' + token + '; secure; SameSite=None';
     let cookiesConcatenationString = usersessionCookie;
+    
+    console.log("userssionCookie");
+    console.log(cookiesConcatenationString);
 
     // console.log('Set-Cookie', 'user_session=' + token + '; secure; SameSite=None');
 
@@ -46,7 +49,8 @@ app.get("/foroApi/authCookies", (req, res) => {
         let usernameCookie = 'username=' + user.username + '; secure; SameSite=None';
         cookiesConcatenationString.concat("," + usernameCookie);
         console.log(cookiesConcatenationString);
-        res.setHeader('Set-Cookie', cookiesConcatenationString);
+        console.log(cookiesConcatenationString);
+        res.header('Set-Cookie', cookiesConcatenationString);
         // res.cookie("username", user.username, {
         //   expires: new Date(Date.now() + 1296000000),
         //   sameSite: 'none'
@@ -107,9 +111,10 @@ const apolloServer = new ApolloServer({
           }
 
         }
-
+        console.log("res cokies de context");
         console.log(cookiesConcatenationString);
-        res.setHeader('Set-Cookie', cookiesConcatenationString);
+        console.log(cookiesConcatenationString);
+        res.header('Set-Cookie', cookiesConcatenationString);
 
         // res.cookie(keyName, jsonCookies[keyName], {
         //   expires: new Date(Date.now() + 1296000000),
@@ -151,7 +156,7 @@ const getJsonCookies = (cookiesString) => {
 };
 
 const logOutClient = (res) => {
-  res.setHeader('Set-Cookie', 'user_session=""; secure; SameSite=None,username=""; secure; SameSite=None');
+  res.header('Set-Cookie', 'user_session=""; secure; SameSite=None,username=""; secure; SameSite=None');
   // res.cookie("user_session", "", {
   //   expire: new Date(Date.now() - 1296000000),
   //   sameSite: 'none'
