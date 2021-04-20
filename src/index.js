@@ -31,7 +31,7 @@ app.get("/foroApi/authCookies", (req, res) => {
     let token = req.headers.authorization;
     const idUser = getUser(token);
 
-    console.log('user_session=' + token + '; SameSite=None');
+    console.log('Set-Cookie', 'user_session=' + token + '; secure; SameSite=None');
 
     res.setHeader('Set-Cookie', 'user_session=' + token + '; secure; SameSite=None');
     // res.cookie("user_session", token, {
@@ -41,7 +41,7 @@ app.get("/foroApi/authCookies", (req, res) => {
 
     models.User.findOne({ _id: idUser.id }, (err, user) => {
       if (user) {
-        console.log('username=' + user.username + '; SameSite=None');
+        console.log('Set-Cookie', 'username=' + user.username + '; secure; SameSite=None');
         res.setHeader('Set-Cookie', 'username=' + user.username + '; secure; SameSite=None');
         // res.cookie("username", user.username, {
         //   expires: new Date(Date.now() + 1296000000),
@@ -92,10 +92,12 @@ const apolloServer = new ApolloServer({
         let keyNames = Object.keys(jsonCookies);
         //reenvio de cookies
         keyNames.forEach(keyName => {
-          res.cookie(keyName, jsonCookies[keyName], token, {
-            expires: new Date(Date.now() + 1296000000),
-            sameSite: 'none'
-          });
+          console.log('Set-Cookie', keyName+'='+ jsonCookies[keyName]+ '; secure; SameSite=None')
+          res.setHeader('Set-Cookie', keyName+'='+ jsonCookies[keyName]+ '; secure; SameSite=None');
+          // res.cookie(keyName, jsonCookies[keyName], {
+          //   expires: new Date(Date.now() + 1296000000),
+          //   sameSite: 'none'
+          // });
         })
       }
     }
@@ -132,12 +134,14 @@ const getJsonCookies = (cookiesString) => {
 };
 
 const logOutClient = (res) => {
-  res.cookie("user_session", "", {
-    expire: new Date(Date.now() - 1296000000),
-    sameSite: 'none'
-  });
-  res.cookie("username", "", {
-    expire: new Date(Date.now() - 1296000000),
-    sameSite: 'none'
-  });
+  res.setHeader('Set-Cookie', 'user_session=""; secure; SameSite=None');
+  // res.cookie("user_session", "", {
+  //   expire: new Date(Date.now() - 1296000000),
+  //   sameSite: 'none'
+  // });
+  res.setHeader('Set-Cookie', 'username=""; secure; SameSite=None');
+  // res.cookie("username", "", {
+  //   expire: new Date(Date.now() - 1296000000),
+  //   sameSite: 'none'
+  // });
 }
