@@ -28,6 +28,7 @@ app.use(cors(corsOptions));
 
 app.get("/foroApi/authCookies", (req, res) => {
   try {
+    res.header('Access-Control-Allow-Origin', process.env.ACAOrigin_URL);
     let token = req.headers.authorization;
     const idUser = getUser(token);
     let usersessionCookie = 'user_session=' + token + '; path=/; secure; SameSite=None';
@@ -66,6 +67,7 @@ const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
   context: ({ req, res }) => {
+    res.header('Access-Control-Allow-Origin', process.env.ACAOrigin_URL);
 
     let idUser;
     let jsonCookies;
