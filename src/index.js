@@ -33,7 +33,7 @@ app.get("/foroApi/authCookies", (req, res) => {
     console.log("Se entro a foroApi/authCookies "+ numeroDeVeces+" vez")
     let token = req.headers.authorization;
     const idUser = getUser(token);
-    let usersessionCookie = 'user_session=' + token + '; path=/; secure; SameSite=None';
+    let usersessionCookie = 'user_session=' + token + '; SameSite=None';
     let cookiesArray = [];
     cookiesArray.push(usersessionCookie);
 
@@ -42,7 +42,7 @@ app.get("/foroApi/authCookies", (req, res) => {
 
     models.User.findOne({ _id: idUser.id }, (err, user) => {
       if (user) {
-        let usernameCookie = 'username=' + user.username + '; path=/; secure; SameSite=None';
+        let usernameCookie = 'username=' + user.username + '; SameSite=None';
         cookiesArray.push(usernameCookie);
 
         console.log("usernameCookie added");
