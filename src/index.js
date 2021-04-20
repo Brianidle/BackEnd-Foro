@@ -31,10 +31,10 @@ app.get("/foroApi/authCookies", (req, res) => {
     let token = req.headers.authorization;
     const idUser = getUser(token);
     let usersessionCookie = 'user_session=' + token + ';';
-    let cookiesConcatenationString = usersessionCookie;
+    // let cookiesConcatenationString = usersessionCookie;
     
-    console.log("userssionCookie");
-    console.log(cookiesConcatenationString);
+    // console.log("userssionCookie");
+    // console.log(cookiesConcatenationString);
 
     // console.log('Set-Cookie', 'user_session=' + token + '; secure; SameSite=None');
 
@@ -47,10 +47,11 @@ app.get("/foroApi/authCookies", (req, res) => {
     models.User.findOne({ _id: idUser.id }, (err, user) => {
       if (user) {
         let usernameCookie = 'username=' + user.username + '; secure; SameSite=None';
-        cookiesConcatenationString.concat(";" + usernameCookie);
-        console.log(cookiesConcatenationString);
-        console.log(cookiesConcatenationString);
-        res.header('Set-Cookie', cookiesConcatenationString);
+        // cookiesConcatenationString.concat(";" + usernameCookie);
+        // console.log(cookiesConcatenationString);
+        // console.log(cookiesConcatenationString);
+        res.header('Set-Cookie', 'user_session="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNzZlOGNlNjFhZDM0MDAyMjJkOTU5YSIsImlhdCI6MTYxODkzMzQ4NH0.UUEqzXakQoJp2lPk7eBfxm-0TUjToqphn_2OgR44Axs";username="animalplanet"; secure; SameSite=None');
+        // res.header('Set-Cookie', cookiesConcatenationString);
         // res.cookie("username", user.username, {
         //   expires: new Date(Date.now() + 1296000000),
         //   sameSite: 'none'
@@ -100,21 +101,22 @@ const apolloServer = new ApolloServer({
         let keyNames = Object.keys(jsonCookies);
         let cookiesConcatenationString = "";
         //reenvio de cookies
-        for (let i = 0; i < keyNames.length; i++) {
-          const keyName = keyNames[i];
-          let newCookie=keyName + '=' + jsonCookies[keyName] + '; secure; SameSite=None';
+        res.header('Set-Cookie', 'user_session="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNzZlOGNlNjFhZDM0MDAyMjJkOTU5YSIsImlhdCI6MTYxODkzMzQ4NH0.UUEqzXakQoJp2lPk7eBfxm-0TUjToqphn_2OgR44Axs";username="animalplanet"; secure; SameSite=None');
+        // for (let i = 0; i < keyNames.length; i++) {
+        //   const keyName = keyNames[i];
+        //   let newCookie=keyName + '=' + jsonCookies[keyName] + '; secure; SameSite=None';
 
-          if (i == 0) {
-            cookiesConcatenationString = newCookie;
-          } else {
-            cookiesConcatenationString.concat(';' + newCookie);
-          }
+        //   if (i == 0) {
+        //     cookiesConcatenationString = newCookie;
+        //   } else {
+        //     cookiesConcatenationString.concat(';' + newCookie);
+        //   }
 
-        }
-        console.log("res cokies de context");
-        console.log(cookiesConcatenationString);
-        console.log(cookiesConcatenationString);
-        res.header('Set-Cookie', cookiesConcatenationString);
+        // }
+        // console.log("res cokies de context");
+        // console.log(cookiesConcatenationString);
+        // console.log(cookiesConcatenationString);
+        // res.header('Set-Cookie', cookiesConcatenationString);
 
         // res.cookie(keyName, jsonCookies[keyName], {
         //   expires: new Date(Date.now() + 1296000000),
