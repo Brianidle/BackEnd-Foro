@@ -36,7 +36,7 @@ app.get("/foroApi/authCookies", (req, res) => {
     
     // console.log("userssionCookie");
     // console.log(cookiesConcatenationString);
-
+    res.setHeader('Set-Cookie', ['username="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNzZlOGNlNjFhZDM0MDAyMjJkOTU5YSIsImlhdCI6MTYxODkzNDY5Nn0.LG8M5eBdnoK07yZF4iEFI5OOx0jzCywbV14k8y-dS2M"; secure; SameSite=None', 'user_session="EL_CAPO"; secure; SameSite=None']);
     res.cookie("user_session", token, {
       secure: true,
       sameSite: false
