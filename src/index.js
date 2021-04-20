@@ -29,6 +29,7 @@ app.use(cors(corsOptions));
 app.get("/foroApi/authCookies", (req, res) => {
   try {
     res.header('Access-Control-Allow-Origin', process.env.ACAOrigin_URL);
+    
     let token = req.headers.authorization;
     const idUser = getUser(token);
     let usersessionCookie = 'user_session=' + token + '; path=/; secure; SameSite=None';
@@ -79,13 +80,9 @@ const apolloServer = new ApolloServer({
       
       let token = jsonCookies.user_session;
       
-      try {
+    
         idUser = getUser(token);
-      }
-      catch (err) {
-        console.log("No se pudo decifrar el token recibido token="+token);
-        logOutClient(res);
-      }
+      
 
     }
     return { models, idUser };
@@ -121,5 +118,6 @@ const getJsonCookies = (cookiesString) => {
 };
 
 const logOutClient = (res) => {
+  console.log("se executa logOutClient()");
   res.setHeader('Set-Cookie', ['user_session=""; path=/; secure; SameSite=None','username=""; path=/; secure; SameSite=None']);
 }
