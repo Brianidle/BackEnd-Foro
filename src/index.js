@@ -75,12 +75,15 @@ const apolloServer = new ApolloServer({
 
     if (cookies) {
       jsonCookies = getJsonCookies(cookies);
+      console.log("Cookies de context")
+      console.log(jsonCookies);
       let token = jsonCookies.user_session;
       
       try {
         idUser = getUser(token);
       }
       catch (err) {
+        console.log("No se pudo decifrar el token recibido token="+token);
         logOutClient(res);
       }
 
